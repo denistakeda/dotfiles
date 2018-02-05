@@ -1,0 +1,7 @@
+#key: imprnative
+#name: import react native
+#contributor: Denis Krivosheev <denis.takeda@gmail.com>
+# --
+import {
+  $0
+} from 'react-native';

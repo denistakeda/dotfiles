@@ -1,0 +1,5 @@
+#key: imp
+#name: basic import
+#contributor: Denis Krivosheev <denis.takeda@gmail.com>
+# --
+import $0 from '$1';

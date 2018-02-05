@@ -1,0 +1,5 @@
+#key : impreact
+#name : import React
+#contributor: Denis Krivosheev <denis.takeda@gmail.com>
+# --
+import * as React from 'react';

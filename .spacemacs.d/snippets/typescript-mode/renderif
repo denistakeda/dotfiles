@@ -1,0 +1,9 @@
+#key: imprenderif
+#name: import render-if library
+#contributor: Denis Krivosheev <denis.takeda@gmail.com>
+# --
+{
+  renderIf($1)(() => (
+    $0
+  ))
+}

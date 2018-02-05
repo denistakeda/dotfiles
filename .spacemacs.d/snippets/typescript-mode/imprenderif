@@ -1,0 +1,5 @@
+#key: imprenderif
+#name: import render-if library
+#contributor: Denis Krivosheev <denis.takeda@gmail.com>
+# --
+import * as renderIf from 'render-if';

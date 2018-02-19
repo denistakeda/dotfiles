@@ -36,14 +36,7 @@ values."
      (typescript :variables
                  typescript-indent-level 2
                  typescript-fmt-tool     'typescript-formatter)
-     (org        :variables
-                 org-directory                    "~/Dropbox/org/"
-                 org-default-notes-file           "~/Dropbox/org/gtd.org"
-                 org-default-notes-file           "~/Dropbox/org/gtd.org"
-                 org-projectile-file              "~/Dropbox/org/work.org"
-                 org-agenda-todo-ignore-deadlines t
-                 org-agenda-todo-ignore-scheduled t
-                 org-agenda-todo-ignore-with-date t)
+     org
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -76,7 +69,7 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(org-projectile)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -90,6 +83,7 @@ values."
    ;; web-mode
    css-indent-offset 2
    web-mode-markup-indent-offset 2
+   js2-basic-offset 2
    web-mode-css-indent-offset 2
    web-mode-code-indent-offset 2
    web-mode-attr-indent-offset 2))
@@ -368,6 +362,16 @@ you should place your code here."
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (add-hook 'web-mode-hook 'prettier-js-mode)
   (add-hook 'typescript-mode-hook 'prettier-js-mode)
+
+  ;; -- Org mode --
+  (with-eval-after-load 'org
+    (setq org-directory                    "~/Dropbox/org/")
+    (setq org-default-notes-file           (concat org-directory "/gtd.org"))
+    (global-set-key (kbd "C-cc") 'org-capture)
+    (setq org-agenda-todo-ignore-deadlines t)
+    (setq org-agenda-todo-ignore-scheduled t)
+    (setq org-agenda-todo-ignore-with-date t)
+    )
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

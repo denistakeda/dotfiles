@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/den/.oh-my-zsh
@@ -85,5 +85,6 @@ export EDITOR=emacsclient
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias ghci="stack ghci"
 
-export NPM_TOKEN="443880f7-d496-4399-b99c-daf48cb798e8"
+export NPM_TOKEN="0670b8a5-7d89-403d-a142-64b56ab011a9"

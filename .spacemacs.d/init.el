@@ -31,50 +31,92 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     yaml
-     parinfer
-     ;; elm
-     (clojure :variables
-              clojure-enable-fancify-symbols t)
-     javascript
      (typescript :variables
                  typescript-indent-level 2
                  typescript-fmt-tool     'typescript-formatter)
-     org
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
-     helm
-     (auto-completion :variables
-                      tide-completion-enable-autoimport-suggestions t
-                      auto-completion-enable-snippets-in-popup      t)
-     html
      react
      ;; better-defaults
+     rust
+     yaml
+     parinfer
+     helm
+     html
      emacs-lisp
      git
      github
      markdown
-     osx
-     ;; (haskell :variables
-     ;;          haskell-process-type 'stack-ghci)
-
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
-     ;; spell-checking
+     elm
+     spell-checking
      syntax-checking
+
+     (javascript :variables
+                 js2-basic-offset 4
+                 js-indent-level 4
+                 js2-strict-missing-semi-warning nil)
+
+     (csharp :variables
+             indent-tabs-mode nil
+             c-syntactic-indentation t
+             c-set-style "ellemtel"
+             c-basic-offset 4
+             truncate-lines t
+             tab-width 4
+             evil-shift-left 4)
+
+     (clojure :variables
+              clojure-enable-fancify-symbols t)
+
+     (org :variables
+          ;; Capturing
+          org-capture-templates '(("t" "Todo" entry (file+headline "~/Dropbox/org/gtd.org" "Tasks")
+                                   "* TODO %?\n  %i\n")
+                                  ("w" "Work Todo" entry (file+headline "~/Dropbox/org/work.org" "Tasks")
+                                   "* TODO %?\n %i\n"))
+          ;; Agenda
+          org-directory "~/Dropbox/org"
+          org-default-notes-file (concat org-directory "/gtd.org")
+          org-agenda-todo-ignore-deadlines t
+          org-agenda-todo-ignore-scheduled t
+          org-agenda-todo-ignore-with-date t
+          org-projectile-file (concat org-directory "/work.org")
+          ;; Refile
+          org-refile-targets '((nil :maxlevel . 9)
+                               (org-agenda-files :maxlevel . 9))
+          org-outline-path-complete-in-steps nil
+          org-refile-use-outline-path t)
+
+     (auto-completion :variables
+                      auto-completion-enable-help-tooltip t
+                      auto-completion-enable-sort-by-usage t
+                      tide-completion-enable-autoimport-suggestions t
+                      auto-completion-tab-key-behavior nil
+                      auto-completion-enable-snippets-in-popup      t)
+
+     (neotree :variables
+              neo-theme 'nerd)
+
+     ;; (haskell :variables
+     ;;          haskell-process-type 'stack-ghci
+     ;;          haskell-enable-hindent-style "fundamental")
+
+     (rust :variables
+           rust-format-on-save t)
+
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom)
+
+     (csharp :variables
+             c-basic-offset 4)
+
      (ranger :variables
-             ranger-show-preview t)
-     ;; version-control
-     )
+             ranger-show-preview t))
+   ;; version-control
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(simpleclip prettier-js)
+   dotspacemacs-additional-packages '(simpleclip)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -88,14 +130,13 @@ values."
    ;; Spacemacs and never uninstall them. (default is `used-only')
    dotspacemacs-install-packages 'used-only
    ;; Indentions
-   js2-basic-offset 2
+   js2-basic-offset 4
    ;; web-mode
-   css-indent-offset 2
-   web-mode-markup-indent-offset 2
-   js2-basic-offset 2
-   web-mode-css-indent-offset 2
-   web-mode-code-indent-offset 2
-   web-mode-attr-indent-offset 2))
+   css-indent-offset 4
+   web-mode-markup-indent-offset 4
+   web-mode-css-indent-offset 4
+   web-mode-code-indent-offset 4
+   web-mode-attr-indent-offset 4))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -143,7 +184,7 @@ values."
    ;; List of items to show in startup buffer or an association list of
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
    ;; Possible values for list-type are:
-   ;; `recents' `bookmarks' `projects' `agenda' `todos'."
+   ;; "`recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    dotspacemacs-startup-lists '((recents . 5)
@@ -335,7 +376,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  )
+  (setq exec-path-from-shell-arguments '("-i")))
+  
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -348,18 +390,34 @@ you should place your code here."
   ;; -- Setup for prettier-js --
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (add-hook 'web-mode-hook 'prettier-js-mode)
-  (add-hook 'typescript-mode-hook 'prettier-js-mode)
+  ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
+
+  ;; -- Disable lock file --
+  (defun nullify-recentf-save-list (orig-fun &rest args) t)
+  (advice-add 'recentf-save-list :around #'nullify-recentf-save-list)
 
   ;; -- Org mode --
   (with-eval-after-load 'org
-    (setq org-directory                    "~/Dropbox/org")
-    (setq org-default-notes-file           (concat org-directory "/gtd.org"))
-    (global-set-key (kbd "C-c c") 'org-capture)
-    (setq org-agenda-todo-ignore-deadlines t)
-    (setq org-agenda-todo-ignore-scheduled t)
-    (setq org-agenda-todo-ignore-with-date t)
-    )
-  )
+    (require 'org-habit)
+    (global-set-key (kbd "C-c c") 'org-capture))
+
+  ;; -- C# --
+  (c-set-offset 'substatement-open 0)
+
+  ;; -- Hoplon setup --
+  (add-to-list 'auto-mode-alist '("\\.cljs\\.hl\\'" . clojurescript-mode))
+  (add-hook 'clojure-mode-hook
+            '(lambda ()
+               ;; Hoplon functions and macros
+               (dolist (pair '((page . 'defun)
+                               (loop-tpl . 'defun)
+                               (if-tpl . '1)
+                               (for-tpl . '1)
+                               (case-tpl . '1)
+                               (cond-tpl . 'defun)))
+                 (put-clojure-indent (car pair)
+                                     (car (last pair)))))))
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -388,9 +446,9 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files '("~/Dropbox/org/gtd.org"))
+ '(org-agenda-files '("~/Dropbox/org/work.org" "~/Dropbox/org/gtd.org"))
  '(package-selected-packages
-   '(magithub ghub+ apiwrap evil-goggles window-purpose imenu-list ranger yaml-mode flycheck-elm elm-mode intero hlint-refactor hindent helm-hoogle haskell-snippets flycheck-haskell company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode clj-refactor inflections edn clojure-snippets paredit peg cider-eval-sexp-fu cider queue clojure-mode simpleclip prettier-js org-mime magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ht flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip auto-dictionary company-nand2tetris nand2tetris-assembler nand2tetris web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data tide typescript-mode flycheck smeargle reveal-in-osx-finder pbcopy osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc markdown-mode magit-gitflow launchctl htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy evil-magit magit magit-popup git-commit ghub with-editor company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))
+   '(ranger yaml-mode flycheck-elm elm-mode intero hlint-refactor hindent helm-hoogle haskell-snippets flycheck-haskell company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode clj-refactor inflections edn clojure-snippets paredit peg cider-eval-sexp-fu cider queue clojure-mode simpleclip prettier-js org-mime magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ht flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip auto-dictionary company-nand2tetris nand2tetris-assembler nand2tetris web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data tide typescript-mode flycheck smeargle reveal-in-osx-finder pbcopy osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc markdown-mode magit-gitflow launchctl htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy evil-magit magit magit-popup git-commit ghub with-editor company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))
  '(prettier-js-args '("--single-quote")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

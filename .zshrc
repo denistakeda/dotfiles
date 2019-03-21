@@ -51,7 +51,7 @@ ZSH_THEME="awesomepanda"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git npm lein yarn)
+plugins=(git npm lein yarn vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -87,4 +87,8 @@ export EDITOR=emacsclient
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ghci="stack ghci"
 
-export NPM_TOKEN="0670b8a5-7d89-403d-a142-64b56ab011a9"
+export NPM_TOKEN="bd379d33-d7d2-42c1-b3df-3423d218f5a5"
+. /Users/den/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+
+alias myemacs="env HOME=$HOME/emacs/default emacs"
+
